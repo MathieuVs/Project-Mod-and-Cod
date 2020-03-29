@@ -7,6 +7,7 @@ n_bits = 512;
 Nbps = 4;
 OSF = 4;
 
+%Need to chose RRCTAP
 cutoff_f = 1000000; % in Hz
 T = 1/(2*cutoff_f);
 beta = 0.3;
