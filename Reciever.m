@@ -6,11 +6,15 @@
 recieved_signal = zeros(512,1);
 Nbps = 4;
 OSF = 4;
+
+RRCTaps = 201;
+
 cutoff_f = 1000000;
 T = 1/(2*cutoff_f);
 beta = 0.3;
 
-fft_resolution = 100;
+frequency_step = sampling_freq/RRCTaps;
+frequency_grid = -frequency_step*(RRCTaps-1)/2:frequency_step:frequency_step*(RRCTaps-1)/2;
 
 
 %% Nyquist filter
@@ -23,30 +27,30 @@ fft_resolution = 100;
 % use ifft and ifftshift (inverse fast fourier transform)
 % put it in pass band?
 
-n_sample = floor( ((1+beta)/(2*T))/ fft_resolution);
-freq = -n_sample*fft_resolution:fft_resolution:n_sample*fft_resolution;
-fiter_freq = nan(2*n_sample+1,1);
+filter_freq = nan(RRCTaps,1);
 
-for i = 1:size(freq,2)
-    if abs(freq(i))<(1-beta)/(2*T)
-        fiter_freq(i) = T;
-    elseif ( (1-beta)/(2*T) <= abs(freq(i)) ) & ( abs(freq(i)) <= (1+beta)/(2*T)  )
-        fiter_freq(i) = (T/2)*(1+cos((pi*T/beta)*(abs(freq(i))-((1-beta)/(2*T)))));
+for i = 1:size(frequency_grid,2)
+    if abs(frequency_grid(i))<(1-beta)/(2*T)
+        filter_freq(i) = T;
+    elseif ( (1-beta)/(2*T) <= abs(frequency_grid(i)) ) && ( abs(frequency_grid(i)) <= (1+beta)/(2*T)  )
+        filter_freq(i) = (T/2)*(1+cos((pi*T/beta)*(abs(frequency_grid(i))-((1-beta)/(2*T)))));
     else
-        fiter_freq(i) = 0;
+        filter_freq(i) = 0;
     end
 end
 
+filter_freq = sqrt(filter_freq/T);
+
 %plot(freq,fiter_freq)
-filter_temps = ifft(fiter_freq);
+filter_temps = ifftshift(ifft(ifftshift(filter_freq)));
 
 filtered_signal = conv(recieved_signal,filter_temps);
 
 %% Oversampling
-oversampled_signal = filtered_signal(1:OSF:size(filtered_signal,1));
+resampled_signal = filtered_signal(1:OSF:size(filtered_signal,1));
 
 
 %% Symbol mapping
 % Should we detect the Nbps?
-demapped_signal = demapping(signal,Nbps,'qam');
+demapped_signal = demapping(resampled_signal,Nbps,'qam');
 
