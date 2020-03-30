@@ -1,11 +1,11 @@
-function transmitted_signal = func_tranceiver(generated_signal,Nbps,OSF,RRCTaps,cutoff_f,beta)
+function transmitted_signal = func_tranceiver(generated_signal,Nbps,OSF,RRCTaps,cutoff_f,beta,mod)
 
 
 
 
 
 %% Symbol mapping
-mapped_signal = mapping(generated_signal,Nbps,'qam');
+mapped_signal = mapping(generated_signal,Nbps,mod);
 
 %% Oversampling
 oversampled_signal = upsample(mapped_signal,OSF);

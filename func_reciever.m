@@ -1,6 +1,4 @@
-function decoded_signal = func_reciever(recieved_signal,Nbps,OSF,RRCTaps,cutoff_f,beta)
-
-
+function decoded_signal = func_reciever(recieved_signal,Nbps,OSF,RRCTaps,cutoff_f,beta,mod)
 
 
 
@@ -32,15 +30,16 @@ end
 
 filter_freq = sqrt(filter_freq/T);
 filter_temps = ifftshift(ifft(ifftshift(filter_freq)));
-
 filtered_signal = conv(recieved_signal,filter_temps);
 
-%% Oversampling
-resampled_signal = filtered_signal(1:OSF:size(filtered_signal,1));
+resized_signal = filtered_signal(RRCTaps+2:length(filtered_signal)-RRCTaps);
 
+%% Oversampling
+
+resampled_signal = resized_signal(1:OSF:size(resized_signal,1));
 
 %% Symbol mapping
 % Should we detect the Nbps?
-demapped_signal = demapping(resampled_signal,Nbps,'qam');
+demapped_signal = demapping(resampled_signal,Nbps,mod);
 decoded_signal=demapped_signal;
 
