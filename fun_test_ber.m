@@ -1,9 +1,4 @@
-clc;clear;close all;
-
-TAP = 33;
-OSF = 4;
-
-n_Symb = 98304;
+function [] = fun_test_ber(TAP, OSF, n_Symb)
 
 SNR_dB = -5 : 0.1 : 25;
 
@@ -27,8 +22,7 @@ hold on
 semilogy(SNR_dB,BER_QPSK)
 semilogy(SNR_dB,BER_16QAM)
 semilogy(SNR_dB,BER_64QAM)
-
-title("BER plot as a function of SNR")
+title(['BER plot SNR, OSF = ', num2str(OSF), ', RCCTAPs = ', num2str(TAP)])
 ylabel('BER')
 xlabel('SNR [dB]')
 legend('BPSK','QPSK','16QAM','64QAM')

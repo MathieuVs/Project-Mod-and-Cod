@@ -17,7 +17,7 @@ oversampled_signal = upsample(mapped_signal,OSF);
 % H(f) = | (T/2)*(1+cos[(pi*T/beta)(|f|-(1-beta)/2T)])      ((1-beta)/2T) =< |f| =< (1+beta)/2T))
 %        | 0                                                (|f| > (1+beta)/2T))
 
-T = 1/(2*cutoff_f);
+T = 1/(2*cutoff_f*OSF);
 sampling_freq = 1/T;
 
 frequency_step = sampling_freq/RRCTaps;
@@ -34,9 +34,14 @@ for i = 1:size(frequency_grid,2)
     end
 end
 
-filter_freq = sqrt(filter_freq/T);
-filter_temps = ifftshift(ifft(ifftshift(filter_freq)));
+H_RC = filter_freq;
+H_RC = ifftshift(H_RC);
+H_RRC = sqrt(H_RC);       
+h_RC = ifft(H_RC);
+h_RRC = ifft(H_RRC);
+h_RRC = fftshift(h_RRC/sqrt(max(h_RC)));
+h_RC = fftshift(h_RC/max(h_RC));
 
-filtered_signal = conv(oversampled_signal,filter_temps);
+filtered_signal = conv(oversampled_signal,h_RRC);
 transmitted_signal = filtered_signal;
 
