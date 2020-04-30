@@ -42,7 +42,7 @@ resized_signal = filtered_signal(RRCTaps:length(filtered_signal)-RRCTaps);
 
 %% Oversampling
 
-resampled_signal = resized_signal(1:OSF:size(resized_signal,1));
+resampled_signal = downsample(resized_signal,OSF);
 
 %% Symbol mapping
 % Should we detect the Nbps?

@@ -19,10 +19,10 @@ signal = randi([0 1], 6, 5)
 encSignal = mod(signal * G, 2);
 
 noise = zeros(6, 10);
-%noise(4,2)=1;
-%noise(4,3)=1;
+noise(2,10)=1;
+noise(3,3)=1;
 noise(4,7)=1;
-%noise(4,9)=1;
+noise(5,9)=1;
 encSignal = mod(encSignal+noise,2)
 
 %% Decoder
@@ -48,9 +48,9 @@ for j = 1:size(encSignal,1)
             v_node(2:size(H,1)+1, i)=mod( sum( c_node(:, [1:i-1,i+1:size(H,2)]), 2),2 ) & H(:,i);
             corr_sig = sum(v_node(:, i))/(sum(H(:,i))+1);
             if corr_sig < 0.5
-                v_node(i)=0;
+                v_node(1,i)=0;
             elseif corr_sig > 0.5
-                v_node(i)=1;
+                v_node(1,i)=1;
             end
         end
     end

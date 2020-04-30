@@ -16,9 +16,9 @@ function signal = func_decoder(encodedSignal, H, maxItt)
                 v_node(2:size(H,1)+1, i)=mod( sum( c_node(:, [1:i-1,i+1:size(H,2)]), 2),2 ) & H(:,i);
                 corr_sig = sum(v_node(:, i))/(sum(H(:,i))+1);
                 if corr_sig < 0.5
-                    v_node(i)=0;
+                    v_node(1,i)=0;
                 elseif corr_sig > 0.5
-                    v_node(i)=1;
+                    v_node(1,i)=1;
                 end
             end
         end
@@ -26,4 +26,3 @@ function signal = func_decoder(encodedSignal, H, maxItt)
     end
     %signal
     signal = reshape(signal, [size(encodedSignal,1)/2,1]);
-    SD=signal'

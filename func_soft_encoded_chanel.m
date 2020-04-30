@@ -1,16 +1,13 @@
-function BER = func_encoded_chanel(n_bits, Nbps, OSF, RRCTaps, cutoff_f, beta, mod, SNR, H, maxItt)
+function BER = func_soft_encoded_chanel(n_bits, OSF, RRCTaps, cutoff_f, beta, SNR, H, maxItt)
+
+Nbps = 1;
+mod ='pam'
 
 
 %% Signal generation
 generated_signal = randi([0 1], n_bits,1);
 
 %% Signal encoding
-%lenttttttt = length(generated_signal)
-%encoded_signal = custom_reshape(generated_signal,[lenttttttt/5, 5]);
-%encoded_signal = [zeros(lenttttttt/5, 10) encoded_signal];
-%encoded_signal = custom_reshape(encoded_signal,[lenttttttt*3, 1]);
-
-
 n_bits_noise = 2*n_bits;
 
 encoded_signal = func_encoder(generated_signal, H);
