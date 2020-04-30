@@ -1,7 +1,7 @@
 function BER = func_soft_encoded_chanel(n_bits, OSF, RRCTaps, cutoff_f, beta, SNR, H, maxItt)
 
 Nbps = 1;
-mod ='pam'
+mod ='pam';
 
 
 %% Signal generation
@@ -33,9 +33,6 @@ end
 
 recieved_signal = transmitted_signal + noise;
 
-%% Reciever
-demapped_signal = func_reciever(recieved_signal,Nbps,OSF,RRCTaps,cutoff_f,beta,mod);
-
 %% Signal decoding
 %length(demapped_signal)
 %decoded_signal = custom_reshape(demapped_signal,[lenttttttt/5, 10]);
@@ -45,7 +42,7 @@ demapped_signal = func_reciever(recieved_signal,Nbps,OSF,RRCTaps,cutoff_f,beta,m
 
 
 
-decoded_signal = func_decoder(demapped_signal, H, maxItt);
+decoded_signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, beta, H, maxItt, noise_power);
 
 %% Verification
 error = decoded_signal - generated_signal;

@@ -1,4 +1,4 @@
-function signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, beta, H, maxItt, noise_var)
+function signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, beta, H, maxItt, var_noise)
 
 
 
@@ -43,11 +43,10 @@ function signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, bet
     resampled_signal = downsample(resized_signal,OSF);
     
     %% Decoder
+    prob_signal = 1./(1+ exp(2.*resampled_signal/var_noise));
     
-    prob_signal = 1./(1+ e.^(2.*resampled_signal/var_noise));
     
-    
-    encodedSignalR = reshape(prob_signal,[length(encodedSignal)/size(H,2), size(H,2)]);
+    encodedSignalR = reshape(prob_signal,[length(prob_signal)/size(H,2), size(H,2)]);
     signal = zeros(size(encodedSignalR,1),size(encodedSignalR,2)/2);
 
     
@@ -61,7 +60,7 @@ function signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, bet
                     if H(HLin,sigEl) == 1
                         prod_int = 1;
                         for HEl = 1:size(H,2)
-                            if sigEl ~= HEl
+                            if sigEl ~= HEl && H(HLin,HEl) == 1
                                 prod_int = prod_int * (2*encodedSignalR(sigLin,HEl) - 1);
                             end
                         end
@@ -72,11 +71,11 @@ function signal = func_soft_decoder(recieved_signal, OSF, RRCTaps, cutoff_f, bet
                 end
                 processed_signal(sigEl) = prod_0/(prod_0+prod_1);
             end
-            encodedSignalR(sigLin,:) = processed_signal(sigEl);
+            encodedSignalR(sigLin,:) = processed_signal;
         end
         signal(sigLin,:) = encodedSignalR(sigLin,6:10);
     end
-    
+    signal = round(1.-signal);
     
     %signal
-    signal = reshape(signal, [size(encodedSignal,1)/2,1]);
+    signal = reshape(signal, [size(prob_signal,1)/2,1]);
